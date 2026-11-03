@@ -527,6 +527,93 @@
     .sidebar{ width:100%; max-height:50vh; border-right:none; border-bottom:1px solid var(--line); }
     .stage{ padding:20px; }
   }
+
+  /* ---------- ESPERIENZA TOUCH / IPAD ---------- */
+  .mobile-topbar{display:contents;}
+  .mobile-sheet{display:contents;}
+  .venue-viewport{position:relative;flex:none;}
+  .canvas-controls{display:none;}
+  .mobile-nav,.mobile-backdrop{display:none;}
+
+  @media (max-width: 900px), (pointer:coarse){
+    html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
+    .app{display:block;position:relative;width:100%;height:100vh;height:100dvh;overflow:hidden;}
+    .sidebar{display:contents;}
+    .mobile-topbar{
+      display:flex;position:fixed;z-index:30;top:0;left:0;right:0;height:66px;
+      align-items:center;justify-content:space-between;gap:10px;padding:7px 14px;
+      background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(43,38,32,.06);
+    }
+    .brand{padding:0;border:0;min-width:0;}
+    .brand .eyebrow{font-size:9px;}
+    .brand h1{font-size:22px;white-space:nowrap;}
+    .stats-row{padding:0;gap:14px;border:0;background:transparent;flex:none;}
+    .stat{flex:none;text-align:right;}
+    .stat .num{font-size:22px;}
+    .stat .lbl{font-size:9px;letter-spacing:.04em;}
+    .stage{
+      position:absolute;top:66px;bottom:72px;left:0;right:0;width:100%;min-height:0;
+      padding:12px;overflow:auto;display:block;-webkit-overflow-scrolling:touch;
+      touch-action:pan-x pan-y;background-color:var(--ivory);
+    }
+    .venue-viewport{margin:0 auto;}
+    .venue{transform-origin:top left;border-radius:10px;}
+    .venue-label{font-size:18px;}
+    .canvas-controls{
+      display:flex;position:fixed;z-index:20;right:12px;top:78px;align-items:center;gap:5px;
+      padding:5px;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:12px;
+      box-shadow:0 3px 12px rgba(43,38,32,.12);backdrop-filter:blur(8px);
+    }
+    .canvas-controls button{border:0;background:var(--forest);color:white;border-radius:8px;min-width:34px;height:34px;font-size:20px;font-weight:600;}
+    .canvas-controls #fitCanvasBtn{font-size:11px;padding:0 9px;min-width:0;}
+    .canvas-controls span{font-size:10px;color:var(--ink-soft);min-width:34px;text-align:center;}
+    .mobile-nav{
+      display:flex;position:fixed;z-index:35;bottom:0;left:0;right:0;height:72px;
+      padding:6px 5px max(6px,env(safe-area-inset-bottom));background:var(--paper);
+      border-top:1px solid var(--line);justify-content:space-around;align-items:center;
+      box-shadow:0 -3px 16px rgba(43,38,32,.08);
+    }
+    .mobile-nav button{flex:1;min-width:0;height:58px;border:0;background:transparent;color:var(--ink-soft);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      font:500 10px 'Work Sans',sans-serif;border-radius:10px;touch-action:manipulation;}
+    .mobile-nav button .nav-icon{font-size:23px;line-height:1;color:var(--forest);}
+    .mobile-nav button.active{background:var(--forest-tint);color:var(--forest-dark);font-weight:600;}
+    .mobile-nav button.active .nav-icon{color:var(--brass);}
+    .mobile-sheet{
+      display:none;position:fixed;z-index:40;left:8px;right:8px;bottom:80px;max-height:min(66vh,620px);
+      overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:18px 18px 12px 12px;
+      box-shadow:0 12px 42px rgba(30,35,30,.22);padding:8px 14px max(14px,env(safe-area-inset-bottom));
+      -webkit-overflow-scrolling:touch;
+    }
+    .mobile-sheet.open{display:block;}
+    .mobile-sheet::before{content:"";display:block;width:38px;height:4px;border-radius:4px;background:#D8CFC1;margin:2px auto 10px;}
+    .mobile-sheet > .section,.mobile-sheet > .footer-actions{display:none;padding:12px 2px;border:0;border-bottom:1px solid var(--line);}
+    .mobile-sheet > .section.active,.mobile-sheet > .footer-actions.active{display:block;}
+    .mobile-sheet .section-title{margin-bottom:12px;}
+    .mobile-sheet .field{margin-bottom:12px;}
+    .mobile-sheet input[type="text"],.mobile-sheet input[type="number"],.mobile-sheet select{font-size:16px;min-height:42px;}
+    .mobile-sheet .shape-btn,.mobile-sheet .seat-chip,.mobile-sheet .btn{min-height:42px;}
+    .mobile-sheet .table-list{max-height:34vh;}
+    .mobile-sheet .guest-list{max-height:25vh;}
+    .mobile-sheet .selected-panel{background:var(--forest-tint);border-radius:12px;padding:14px;}
+    .mobile-sheet .footer-actions .row-2{display:flex;gap:8px;margin-top:8px;}
+    .mobile-sheet .footer-actions .row-2 .btn{flex:1;}
+    .mobile-backdrop{display:none;position:fixed;z-index:38;inset:66px 0 72px;background:rgba(26,31,27,.22);}
+    .mobile-backdrop.open{display:block;}
+    .table-delete{display:flex;width:30px;height:30px;top:-12px;right:-12px;font-size:17px;}
+    .table-wrap{touch-action:none;}
+    .table-name{font-size:18px;}
+    .table-occ{font-size:12px;}
+  }
+  @media (max-width: 520px){
+    .brand h1{font-size:18px;}
+    .stats-row{gap:8px;}
+    .stat .num{font-size:19px;}
+    .stat .lbl{font-size:8px;}
+    .mobile-topbar{padding-left:10px;padding-right:10px;}
+    .canvas-controls{top:74px;}
+  }
+
 </style>
 </head>
 <body>
@@ -536,12 +623,13 @@
   <!-- ================= SIDEBAR ================= -->
   <aside class="sidebar">
 
-    <div class="brand">
-      <div class="eyebrow">Configuratore</div>
-      <h1>Tavoli del Ricevimento</h1>
-    </div>
+    <div class="mobile-topbar">
+      <div class="brand">
+        <div class="eyebrow">Configuratore</div>
+        <h1>Tavoli del Ricevimento</h1>
+      </div>
 
-    <div class="stats-row">
+      <div class="stats-row">
       <div class="stat">
         <div class="num" id="statTables">0</div>
         <div class="lbl">Tavoli</div>
@@ -550,10 +638,12 @@
         <div class="num" id="statGuests">0</div>
         <div class="lbl">Invitati</div>
       </div>
+      </div>
     </div>
 
+    <div class="mobile-sheet" id="mobileSheet">
     <!-- Add table -->
-    <div class="section">
+    <div class="section" id="addTableSection">
       <p class="section-title">Aggiungi tavolo</p>
 
       <div class="field">
@@ -590,7 +680,7 @@
     </div>
 
     <!-- Table list -->
-    <div class="section">
+    <div class="section" id="tableListSection">
       <p class="section-title">I tuoi tavoli</p>
       <ul class="table-list" id="tableList"></ul>
       <p class="empty-hint" id="emptyListHint">Nessun tavolo ancora: aggiungine uno qui sopra.</p>
@@ -637,13 +727,13 @@
     </div>
 
     <!-- Report -->
-    <div class="footer-actions" style="padding-bottom:0;">
+    <div class="footer-actions" id="reportSection" style="padding-bottom:0;">
       <button class="btn btn-primary btn-block" id="reportBtn">🖨 Genera report (PDF)</button>
       <p class="note">Scarica un PDF con l'immagine della planimetria e l'elenco invitati di ogni tavolo.</p>
     </div>
 
     <!-- Save / Load -->
-    <div class="footer-actions" style="padding-top:8px;">
+    <div class="footer-actions" id="fileActionsSection" style="padding-top:8px;">
       <button class="btn btn-outline btn-block" id="saveBtn">⬇ Salva configurazione (JSON)</button>
       <div class="row-2">
         <button class="btn btn-outline" id="loadBtn">⬆ Carica file</button>
@@ -651,11 +741,17 @@
       </div>
       <input type="file" id="fileInput" accept="application/json" style="display:none;">
     </div>
+    <div class="section" id="settingsSection">
+      <p class="section-title">Suggerimenti</p>
+      <p class="note">Tocca un tavolo nella planimetria per modificarlo e gestire gli invitati. Trascinalo per spostarlo. Usa i controlli + e − per ingrandire o ridurre la planimetria.</p>
+    </div>
+    </div><!-- /mobile-sheet -->
 
   </aside>
 
   <!-- ================= STAGE ================= -->
-  <main class="stage">
+  <main class="stage" id="stage">
+    <div class="venue-viewport" id="venueViewport">
     <div class="venue" id="venue">
       <div class="venue-label"><span>Planimetria</span>Sala Ricevimento</div>
       <div class="corner-tick tl"></div>
@@ -668,7 +764,23 @@
       </div>
       <!-- tables get injected here -->
     </div>
+    </div><!-- /venue-viewport -->
+    <div class="canvas-controls" id="canvasControls">
+      <button type="button" id="zoomOutBtn" aria-label="Riduci zoom">−</button>
+      <span id="zoomLabel">Adatta</span>
+      <button type="button" id="zoomInBtn" aria-label="Aumenta zoom">+</button>
+      <button type="button" id="fitCanvasBtn">Adatta</button>
+    </div>
   </main>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="Strumenti">
+    <button type="button" data-panel="addTableSection"><span class="nav-icon">＋</span><span>Tavolo</span></button>
+    <button type="button" data-panel="tableListSection"><span class="nav-icon">▦</span><span>Elenco</span></button>
+    <button type="button" data-panel="selectedPanel"><span class="nav-icon">✎</span><span>Selezione</span></button>
+    <button type="button" data-panel="fileActionsSection"><span class="nav-icon">⇧</span><span>File / PDF</span></button>
+    <button type="button" data-panel="settingsSection"><span class="nav-icon">⚙</span><span>Altro</span></button>
+  </nav>
+  <div class="mobile-backdrop" id="mobileBackdrop"></div>
 
 </div>
 
@@ -701,6 +813,64 @@
   var statGuests = document.getElementById('statGuests');
   var addTableBtn = document.getElementById('addTableBtn');
   var selectedPanel = document.getElementById('selectedPanel');
+  var stage = document.getElementById('stage');
+  var venueViewport = document.getElementById('venueViewport');
+  var mobileSheet = document.getElementById('mobileSheet');
+  var mobileBackdrop = document.getElementById('mobileBackdrop');
+  var mobileNav = document.getElementById('mobileNav');
+  var canvasScale = 1;
+  var manualCanvasZoom = false;
+  var mobileMode = window.matchMedia('(max-width: 900px), (pointer:coarse)').matches;
+
+  function setMobilePanel(panelId){
+    if (!mobileMode) return;
+    var isOpen = mobileSheet.classList.contains('open');
+    var navAlreadyActive = mobileNav.querySelector('button.active');
+    if (isOpen && navAlreadyActive && navAlreadyActive.dataset.panel === panelId){ closeMobilePanel(); return; }
+    mobileSheet.querySelectorAll('.active').forEach(function(el){el.classList.remove('active');});
+    var panel = document.getElementById(panelId);
+    if (!panel || (panelId === 'selectedPanel' && !selectedTableId)) panel = document.getElementById('tableListSection');
+    if (panel) panel.classList.add('active');
+    // Report and file operations share one navigation destination.
+    if (panelId === 'fileActionsSection') document.getElementById('reportSection').classList.add('active');
+    mobileSheet.classList.add('open');
+    mobileBackdrop.classList.add('open');
+    mobileNav.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',b.dataset.panel===panelId);});
+  }
+  function closeMobilePanel(){
+    mobileSheet.classList.remove('open'); mobileBackdrop.classList.remove('open');
+    mobileSheet.querySelectorAll('.active').forEach(function(el){el.classList.remove('active');});
+    mobileNav.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+  }
+  mobileNav.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){setMobilePanel(btn.dataset.panel);});});
+  mobileBackdrop.addEventListener('click',closeMobilePanel);
+  document.getElementById('zoomInBtn').addEventListener('click',function(){setCanvasScale(canvasScale*1.18,true);});
+  document.getElementById('zoomOutBtn').addEventListener('click',function(){setCanvasScale(canvasScale/1.18,true);});
+  document.getElementById('fitCanvasBtn').addEventListener('click',function(){fitCanvas();});
+
+  function setCanvasScale(value,manual){
+    canvasScale=Math.max(.22,Math.min(1.8,value));
+    if(manual) manualCanvasZoom=true;
+    venue.style.transform='scale('+canvasScale+')';
+    venueViewport.style.width=(VENUE_W*canvasScale)+'px';
+    venueViewport.style.height=(VENUE_H*canvasScale)+'px';
+    document.getElementById('zoomLabel').textContent=Math.round(canvasScale*100)+'%';
+  }
+  function fitCanvas(){
+    if(!mobileMode){setCanvasScale(1,false);return;}
+    var available=Math.max(280,stage.clientWidth-24);
+    setCanvasScale(Math.min(1,available/VENUE_W),false);
+    manualCanvasZoom=false;
+    stage.scrollLeft=0; stage.scrollTop=0;
+  }
+  function updateResponsiveMode(){
+    var next=window.matchMedia('(max-width: 900px), (pointer:coarse)').matches;
+    if(next!==mobileMode){mobileMode=next;closeMobilePanel();}
+    if(mobileMode){if(!manualCanvasZoom)fitCanvas();}
+    else{setCanvasScale(1,false);venue.style.transform='none';venueViewport.style.width='1600px';venueViewport.style.height='1000px';}
+  }
+  window.addEventListener('resize',function(){updateResponsiveMode();});
+  setTimeout(updateResponsiveMode,0);
 
   // ---------- helpers ----------
   function totalGuests(){
@@ -922,12 +1092,15 @@
   function selectTable(id){
     selectedTableId = id;
     renderAll();
-    document.getElementById('guestNameInput').focus();
+    if (mobileMode) setMobilePanel('selectedPanel');
+    var guestInput=document.getElementById('guestNameInput');
+    if (!mobileMode && guestInput) guestInput.focus();
   }
 
   document.getElementById('closeSelBtn').addEventListener('click', function(){
     selectedTableId = null;
     renderAll();
+    if (mobileMode) closeMobilePanel();
   });
 
   // ---------- add table ----------
@@ -975,6 +1148,7 @@
     nameInput.value = '';
     selectedTableId = table.id;
     renderAll();
+    if (mobileMode) setMobilePanel('selectedPanel');
   });
 
   // ---------- edit / delete table ----------
@@ -1039,8 +1213,8 @@
 
     wrap.addEventListener('pointermove', function(e){
       if (!dragging) return;
-      var dx = e.clientX - startX;
-      var dy = e.clientY - startY;
+      var dx = (e.clientX - startX) / canvasScale;
+      var dy = (e.clientY - startY) / canvasScale;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
       var dims = getDims(table);
       var newX = Math.max(0, Math.min(VENUE_W - dims.w, origX + dx));
@@ -1253,6 +1427,7 @@
   }
 
   // ---------- init ----------
+  updateResponsiveMode();
   renderAll();
 
 })();
