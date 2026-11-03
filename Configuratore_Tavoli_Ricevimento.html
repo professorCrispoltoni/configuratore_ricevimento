@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuratore Tavoli — Ricevimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F7F3EC;
+    --paper:#FFFFFF;
+    --ink:#2B2620;
+    --ink-soft:#7A7167;
+    --forest:#39493A;
+    --forest-dark:#25302A;
+    --forest-tint:#EDF1EA;
+    --brass:#B08A34;
+    --brass-light:#E9DAB4;
+    --blush:#E9D6C8;
+    --line:#E4DCD0;
+    --danger:#A6453A;
+    --danger-tint:#F6E7E4;
+    --radius-s:6px;
+    --radius-m:10px;
+    --radius-l:16px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Work Sans', sans-serif;
+    background:var(--ivory);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .app{
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:330px;
+    min-width:300px;
+    background:var(--paper);
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+
+  .brand{
+    padding:26px 26px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--brass);
+    font-weight:600;
+  }
+  .brand h1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:30px;
+    margin:4px 0 0;
+    color:var(--forest-dark);
+    letter-spacing:.01em;
+  }
+
+  .stats-row{
+    display:flex;
+    gap:10px;
+    padding:16px 26px;
+    border-bottom:1px solid var(--line);
+    background:var(--forest-tint);
+  }
+  .stat{
+    flex:1;
+    text-align:left;
+  }
+  .stat .num{
+    font-family:'Cormorant Garamond', serif;
+    font-size:26px;
+    font-weight:700;
+    color:var(--forest-dark);
+    line-height:1;
+  }
+  .stat .num.warn{ color:var(--danger); }
+  .stat .lbl{
+    font-size:11px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-top:3px;
+  }
+
+  .section{
+    padding:20px 26px;
+    border-bottom:1px solid var(--line);
+  }
+  .section-title{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.1em;
+    font-weight:600;
+    color:var(--forest);
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-title::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  label.field-label{
+    display:block;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    font-weight:500;
+  }
+
+  input[type="text"], input[type="number"], select{
+    width:100%;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-s);
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus{
+    border-color:var(--brass);
+  }
+
+  .field{ margin-bottom:14px; }
+  .field-row{ display:flex; gap:10px; }
+  .field-row .field{ flex:1; }
+
+  .shape-toggle{
+    display:flex;
+    gap:8px;
+  }
+  .shape-btn{
+    flex:1;
+    padding:10px 8px;
+    border:1px solid var(--line);
+    background:var(--ivory);
+    border-radius:var(--radius-s);
+    cursor:pointer;
+    font-size:13px;
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    transition:all .15s ease;
+  }
+  .shape-btn svg{ width:16px; height:16px; flex:none; }
+  .shape-btn.active{
+    background:var(--forest);
+    border-color:var(--forest);
+    color:#fff;
+  }
+
+  .seat-presets{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+  }
+  .seat-chip{
+    padding:5px 12px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:var(--ivory);
+    font-size:12.5px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .15s ease;
+  }
+  .seat-chip.active{
+    background:var(--brass-light);
+    border-color:var(--brass);
+    color:var(--forest-dark);
+    font-weight:600;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:10px 16px;
+    border-radius:var(--radius-s);
+    border:1px solid transparent;
+    font-family:'Work Sans', sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn-primary{ background:var(--forest); color:#fff; width:100%; }
+  .btn-primary:hover{ background:var(--forest-dark); }
+  .btn-primary:disabled{ background:#C9C3B9; cursor:not-allowed; }
+  .btn-outline{ background:transparent; border-color:var(--line); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--forest); color:var(--forest); }
+  .btn-danger-outline{ background:transparent; border-color:var(--danger); color:var(--danger); }
+  .btn-danger-outline:hover{ background:var(--danger-tint); }
+  .btn-block{ width:100%; }
+  .btn-small{ padding:6px 10px; font-size:12px; }
+
+  .note{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    line-height:1.5;
+  }
+  .note.warn{ color:var(--danger); }
+
+  /* Table list */
+  .table-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    max-height:260px;
+    overflow-y:auto;
+  }
+  .table-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    border-radius:var(--radius-s);
+    cursor:pointer;
+    border:1px solid transparent;
+    margin-bottom:4px;
+  }
+  .table-row:hover{ background:var(--forest-tint); }
+  .table-row.selected{
+    background:var(--forest-tint);
+    border-color:var(--brass);
+  }
+  .row-shape{
+    width:26px;height:26px;
+    flex:none;
+    border:2px solid var(--forest);
+    background:var(--paper);
+  }
+  .row-shape.round{ border-radius:50%; }
+  .row-shape.rect{ border-radius:4px; width:32px; height:20px; }
+  .row-info{ flex:1; min-width:0; }
+  .row-name{ font-size:13.5px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .row-meta{ font-size:11.5px; color:var(--ink-soft); }
+  .row-meta.over{ color:var(--danger); }
+  .row-del{
+    flex:none;
+    width:22px;height:22px;
+    border-radius:50%;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:15px;
+    line-height:1;
+  }
+  .row-del:hover{ background:var(--danger-tint); color:var(--danger); }
+
+  .empty-hint{
+    font-size:13px;
+    color:var(--ink-soft);
+    font-style:italic;
+    padding:6px 2px;
+  }
+
+  /* Selected table panel */
+  .selected-panel{ background:var(--forest-tint); }
+  .selected-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:14px;
+  }
+  .selected-header h3{
+    font-family:'Cormorant Garamond', serif;
+    font-size:22px;
+    margin:0;
+    color:var(--forest-dark);
+  }
+  .close-panel{
+    background:none;border:none;cursor:pointer;
+    font-size:13px;color:var(--ink-soft);
+    text-decoration:underline;
+  }
+
+  .guest-add-row{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+  }
+  .guest-add-row input{ flex:1; }
+
+  .guest-list{
+    list-style:none;
+    margin:12px 0 0;
+    padding:0;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .guest-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:7px 9px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius-s);
+    margin-bottom:6px;
+  }
+  .guest-seat-badge{
+    flex:none;
+    width:20px;height:20px;
+    border-radius:50%;
+    background:var(--brass-light);
+    color:var(--forest-dark);
+    font-size:10.5px;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .guest-name{ flex:1; font-size:13.5px; }
+  .guest-remove{
+    flex:none;
+    background:none;border:none;cursor:pointer;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .guest-remove:hover{ color:var(--danger); }
+
+  .footer-actions{
+    padding:20px 26px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:auto;
+  }
+  .footer-actions .row-2{
+    display:flex;
+    gap:10px;
+  }
+  .footer-actions .row-2 .btn{ flex:1; }
+
+  /* ---------- CANVAS AREA ---------- */
+  .stage{
+    flex:1;
+    position:relative;
+    overflow:auto;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(57,73,58,0.035) 27px, rgba(57,73,58,0.035) 28px),
+      repeating-linear-gradient(90deg, transparent, transparent 27px, rgba(57,73,58,0.035) 27px, rgba(57,73,58,0.035) 28px),
+      var(--ivory);
+    padding:26px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
+  }
+
+  .venue{
+    position:relative;
+    width:1600px;
+    height:1000px;
+    min-width:1600px;
+    min-height:1000px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius-l);
+    box-shadow:0 1px 3px rgba(43,38,32,0.06), 0 12px 32px -16px rgba(43,38,32,0.18);
+  }
+
+  .venue-label{
+    position:absolute;
+    top:20px; left:28px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--forest-dark);
+    letter-spacing:.02em;
+    pointer-events:none;
+  }
+  .venue-label span{
+    display:block;
+    font-family:'Work Sans', sans-serif;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--brass);
+    font-weight:600;
+    margin-bottom:2px;
+  }
+
+  .corner-tick{
+    position:absolute;
+    width:16px;height:16px;
+    border-color:var(--brass);
+    opacity:.55;
+    pointer-events:none;
+  }
+  .corner-tick.tl{ top:14px; left:14px; border-top:2px solid; border-left:2px solid; }
+  .corner-tick.tr{ top:14px; right:14px; border-top:2px solid; border-right:2px solid; }
+  .corner-tick.bl{ bottom:14px; left:14px; border-bottom:2px solid; border-left:2px solid; }
+  .corner-tick.br{ bottom:14px; right:14px; border-bottom:2px solid; border-right:2px solid; }
+
+  .venue-empty{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:6px;
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  .venue-empty .big{
+    font-family:'Cormorant Garamond', serif;
+    font-size:26px;
+    color:var(--forest);
+  }
+
+  .table-wrap{
+    position:absolute;
+    cursor:grab;
+    touch-action:none;
+    user-select:none;
+  }
+  .table-wrap.dragging{ cursor:grabbing; z-index:50; }
+  .table-wrap.selected .table-shape{
+    box-shadow:0 0 0 3px var(--brass), 0 8px 18px -6px rgba(43,38,32,0.35);
+  }
+
+  .table-shape{
+    width:100%;
+    height:100%;
+    background:var(--blush);
+    border:2px solid var(--forest);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 14px -6px rgba(43,38,32,0.28);
+    transition:box-shadow .12s ease;
+  }
+  .table-shape.round{ border-radius:50%; }
+  .table-shape.rect{ border-radius:12px; }
+
+  .table-name{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:700;
+    font-size:16px;
+    color:var(--forest-dark);
+    line-height:1.1;
+    text-align:center;
+    padding:0 8px;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .table-occ{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:2px;
+    font-weight:600;
+  }
+  .table-occ.over{ color:var(--danger); }
+
+  .table-delete{
+    position:absolute;
+    top:-8px; right:-8px;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:13px;
+    line-height:1;
+    display:none;
+    align-items:center;justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  }
+  .table-wrap:hover .table-delete{ display:flex; }
+  .table-delete:hover{ background:var(--danger-tint); color:var(--danger); border-color:var(--danger); }
+
+  .seat-dot{
+    position:absolute;
+    width:13px;height:13px;
+    border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--line);
+    transform:translate(-50%,-50%);
+  }
+  .seat-dot.filled{
+    background:var(--brass);
+    border-color:var(--brass);
+  }
+
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:#D8CFC1; border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--brass); }
+
+  @media (max-width: 900px){
+    .app{ flex-direction:column; }
+    .sidebar{ width:100%; max-height:50vh; border-right:none; border-bottom:1px solid var(--line); }
+    .stage{ padding:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="eyebrow">Configuratore</div>
+      <h1>Tavoli del Ricevimento</h1>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="num" id="statTables">0</div>
+        <div class="lbl">Tavoli</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="statGuests">0</div>
+        <div class="lbl">Invitati</div>
+      </div>
+    </div>
+
+    <!-- Add table -->
+    <div class="section">
+      <p class="section-title">Aggiungi tavolo</p>
+
+      <div class="field">
+        <label class="field-label">Forma</label>
+        <div class="shape-toggle">
+          <button type="button" class="shape-btn active" data-shape="round">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>
+            Tondo
+          </button>
+          <button type="button" class="shape-btn" data-shape="rect">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+            Rettangolare
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Numero di posti</label>
+        <input type="number" id="newSeats" min="2" value="8">
+        <div class="seat-presets">
+          <span class="seat-chip active" data-seats="8">8</span>
+          <span class="seat-chip" data-seats="10">10</span>
+          <span class="seat-chip" data-seats="12">12</span>
+        </div>
+        <p class="note">Puoi anche digitare un numero di posti diverso direttamente nel campo qui sopra.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Nome tavolo (opzionale)</label>
+        <input type="text" id="newName" placeholder="Es. Tavolo degli sposi">
+      </div>
+
+      <button class="btn btn-primary" id="addTableBtn">+ Aggiungi tavolo</button>
+    </div>
+
+    <!-- Table list -->
+    <div class="section">
+      <p class="section-title">I tuoi tavoli</p>
+      <ul class="table-list" id="tableList"></ul>
+      <p class="empty-hint" id="emptyListHint">Nessun tavolo ancora: aggiungine uno qui sopra.</p>
+    </div>
+
+    <!-- Selected table editor -->
+    <div class="section selected-panel" id="selectedPanel" style="display:none;">
+      <div class="selected-header">
+        <h3 id="selTitle">Tavolo</h3>
+        <button class="close-panel" id="closeSelBtn">chiudi</button>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Nome</label>
+          <input type="text" id="editName">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Forma</label>
+          <select id="editShape">
+            <option value="round">Tondo</option>
+            <option value="rect">Rettangolare</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Posti (modificabile a mano)</label>
+          <input type="number" id="editSeats" min="2">
+        </div>
+      </div>
+      <div class="field-row" style="margin-bottom:4px;">
+        <button class="btn btn-outline" id="saveEditBtn" style="flex:1;">Salva modifiche</button>
+        <button class="btn btn-danger-outline" id="deleteTableBtn" style="flex:1;">Elimina tavolo</button>
+      </div>
+
+      <p class="section-title" style="margin-top:20px;">Invitati al tavolo</p>
+      <div class="guest-add-row">
+        <input type="text" id="guestNameInput" placeholder="Nome e cognome invitato">
+        <button class="btn btn-primary" id="addGuestBtn" style="width:auto;padding:9px 14px;">Aggiungi</button>
+      </div>
+      <p class="note" id="guestOverNote"></p>
+      <ul class="guest-list" id="guestList"></ul>
+    </div>
+
+    <!-- Report -->
+    <div class="footer-actions" style="padding-bottom:0;">
+      <button class="btn btn-primary btn-block" id="reportBtn">🖨 Genera report (PDF)</button>
+      <p class="note">Scarica un PDF con l'immagine della planimetria e l'elenco invitati di ogni tavolo.</p>
+    </div>
+
+    <!-- Save / Load -->
+    <div class="footer-actions" style="padding-top:8px;">
+      <button class="btn btn-outline btn-block" id="saveBtn">⬇ Salva configurazione (JSON)</button>
+      <div class="row-2">
+        <button class="btn btn-outline" id="loadBtn">⬆ Carica file</button>
+        <button class="btn btn-danger-outline" id="resetBtn">Azzera tutto</button>
+      </div>
+      <input type="file" id="fileInput" accept="application/json" style="display:none;">
+    </div>
+
+  </aside>
+
+  <!-- ================= STAGE ================= -->
+  <main class="stage">
+    <div class="venue" id="venue">
+      <div class="venue-label"><span>Planimetria</span>Sala Ricevimento</div>
+      <div class="corner-tick tl"></div>
+      <div class="corner-tick tr"></div>
+      <div class="corner-tick bl"></div>
+      <div class="corner-tick br"></div>
+      <div class="venue-empty" id="venueEmpty">
+        <div class="big">La sala è ancora vuota</div>
+        <div>Aggiungi il primo tavolo dal pannello a sinistra</div>
+      </div>
+      <!-- tables get injected here -->
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var VENUE_W = 1600;
+  var VENUE_H = 1000;
+
+  var state = {
+    tables: [] // {id, name, shape, seats, x, y, guests:[{id,name}]}
+  };
+
+  var selectedTableId = null;
+  var idCounter = 1;
+  function nextId(){ return "t" + (idCounter++) + "_" + Date.now().toString(36); }
+  function nextGuestId(){ return "g" + (idCounter++) + "_" + Date.now().toString(36); }
+
+  var currentShape = "round";
+
+  // ---------- DOM refs ----------
+  var venue = document.getElementById('venue');
+  var venueEmpty = document.getElementById('venueEmpty');
+  var tableList = document.getElementById('tableList');
+  var emptyListHint = document.getElementById('emptyListHint');
+  var statTables = document.getElementById('statTables');
+  var statGuests = document.getElementById('statGuests');
+  var addTableBtn = document.getElementById('addTableBtn');
+  var selectedPanel = document.getElementById('selectedPanel');
+
+  // ---------- helpers ----------
+  function totalGuests(){
+    return state.tables.reduce(function(sum,t){ return sum + t.guests.length; }, 0);
+  }
+
+  function roundSize(seats){
+    var s = 86 + seats * 6;
+    return Math.max(90, Math.min(180, s));
+  }
+
+  // for rectangular tables: seats split between the two long sides
+  function rectSeatSplit(seats){
+    var top = Math.ceil(seats/2);
+    var bottom = seats - top;
+    return { top: top, bottom: bottom };
+  }
+
+  function rectSize(seats){
+    var split = rectSeatSplit(seats);
+    var perSide = Math.max(split.top, split.bottom);
+    var w = 60 + perSide * 56;
+    w = Math.max(170, Math.min(380, w));
+    var h = 92;
+    return { w: w, h: h };
+  }
+
+  function getDims(table){
+    if (table.shape === 'rect'){
+      return rectSize(table.seats);
+    }
+    var s = roundSize(table.seats);
+    return { w: s, h: s };
+  }
+
+  function findTable(id){
+    for (var i=0;i<state.tables.length;i++) if (state.tables[i].id === id) return state.tables[i];
+    return null;
+  }
+
+  function defaultTableName(){
+    var n = state.tables.length + 1;
+    return "Tavolo " + n;
+  }
+
+  function randomPosition(w, h){
+    // try to avoid stacking exactly, simple scatter
+    var margin = 40;
+    var x = margin + Math.random() * (VENUE_W - w - margin*2);
+    var y = margin + 60 + Math.random() * (VENUE_H - h - margin*2 - 60);
+    return { x: Math.round(Math.max(margin,x)), y: Math.round(Math.max(margin+60,y)) };
+  }
+
+  // ---------- rendering ----------
+  function renderAll(){
+    renderStats();
+    renderTableList();
+    renderCanvas();
+    renderSelectedPanel();
+  }
+
+  function renderStats(){
+    var tCount = state.tables.length;
+    var gCount = totalGuests();
+    statTables.textContent = tCount;
+    statGuests.textContent = gCount;
+    statTables.className = 'num';
+    statGuests.className = 'num';
+  }
+
+
+  function renderTableList(){
+    tableList.innerHTML = '';
+    if (state.tables.length === 0){
+      emptyListHint.style.display = 'block';
+      return;
+    }
+    emptyListHint.style.display = 'none';
+
+    state.tables.forEach(function(t){
+      var li = document.createElement('li');
+      li.className = 'table-row' + (t.id === selectedTableId ? ' selected' : '');
+      li.dataset.id = t.id;
+
+      var over = t.guests.length > t.seats;
+      li.innerHTML =
+        '<div class="row-shape ' + t.shape + '"></div>' +
+        '<div class="row-info">' +
+          '<div class="row-name"></div>' +
+          '<div class="row-meta' + (over?' over':'') + '">' + (t.shape==='round'?'Tondo':'Rettangolare') + ' · ' + t.seats + ' posti · ' + t.guests.length + ' assegnati' + (over?' ⚠':'') + '</div>' +
+        '</div>' +
+        '<button class="row-del" title="Elimina tavolo">×</button>';
+      li.querySelector('.row-name').textContent = t.name;
+
+      li.addEventListener('click', function(e){
+        if (e.target.classList.contains('row-del')) return;
+        selectTable(t.id);
+      });
+      li.querySelector('.row-del').addEventListener('click', function(e){
+        e.stopPropagation();
+        deleteTable(t.id);
+      });
+
+      tableList.appendChild(li);
+    });
+  }
+
+  function appendSeatDot(wrap, x, y, guest){
+    var dot = document.createElement('div');
+    dot.className = 'seat-dot' + (guest ? ' filled' : '');
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+    dot.title = guest ? guest.name : 'Posto libero';
+    wrap.appendChild(dot);
+  }
+
+  function renderCanvas(){
+    // remove existing table-wraps
+    var existing = venue.querySelectorAll('.table-wrap');
+    existing.forEach(function(el){ el.remove(); });
+
+    venueEmpty.style.display = state.tables.length === 0 ? 'flex' : 'none';
+
+    state.tables.forEach(function(t){
+      var dims = getDims(t);
+      var wrap = document.createElement('div');
+      wrap.className = 'table-wrap' + (t.id === selectedTableId ? ' selected' : '');
+      wrap.style.width = dims.w + 'px';
+      wrap.style.height = dims.h + 'px';
+      wrap.style.left = t.x + 'px';
+      wrap.style.top = t.y + 'px';
+      wrap.dataset.id = t.id;
+
+      var over = t.guests.length > t.seats;
+      wrap.innerHTML =
+        '<div class="table-shape ' + t.shape + '">' +
+          '<div class="table-name"></div>' +
+          '<div class="table-occ' + (over?' over':'') + '">' + t.guests.length + '/' + t.seats + '</div>' +
+        '</div>' +
+        '<button class="table-delete" title="Elimina tavolo">×</button>';
+      wrap.querySelector('.table-name').textContent = t.name;
+
+      // seat dots
+      var margin = 13;
+      var guestIdx = 0;
+      if (t.shape === 'round'){
+        var radius = dims.w/2 + margin;
+        for (var i=0;i<t.seats;i++){
+          var angle = (Math.PI*2 * i / t.seats) - Math.PI/2;
+          var dx = Math.cos(angle) * radius;
+          var dy = Math.sin(angle) * radius;
+          appendSeatDot(wrap, dims.w/2 + dx, dims.h/2 + dy, guestIdx < t.guests.length ? t.guests[guestIdx] : null);
+          guestIdx++;
+        }
+      } else {
+        var split = rectSeatSplit(t.seats);
+        for (var ti=0; ti<split.top; ti++){
+          var x = dims.w * (ti+0.5) / split.top;
+          appendSeatDot(wrap, x, -margin, guestIdx < t.guests.length ? t.guests[guestIdx] : null);
+          guestIdx++;
+        }
+        for (var bi=0; bi<split.bottom; bi++){
+          var x2 = dims.w * (bi+0.5) / split.bottom;
+          appendSeatDot(wrap, x2, dims.h + margin, guestIdx < t.guests.length ? t.guests[guestIdx] : null);
+          guestIdx++;
+        }
+      }
+
+      wrap.querySelector('.table-delete').addEventListener('click', function(e){
+        e.stopPropagation();
+        deleteTable(t.id);
+      });
+
+      attachDrag(wrap, t);
+      venue.appendChild(wrap);
+    });
+  }
+
+  function renderSelectedPanel(){
+    var t = findTable(selectedTableId);
+    if (!t){
+      selectedPanel.style.display = 'none';
+      return;
+    }
+    selectedPanel.style.display = 'block';
+    document.getElementById('selTitle').textContent = t.name;
+    document.getElementById('editName').value = t.name;
+    document.getElementById('editShape').value = t.shape;
+    document.getElementById('editSeats').value = t.seats;
+
+    var guestOverNote = document.getElementById('guestOverNote');
+    if (t.guests.length > t.seats){
+      guestOverNote.textContent = 'Attenzione: ci sono più invitati (' + t.guests.length + ') che posti disponibili (' + t.seats + ').';
+      guestOverNote.classList.add('warn');
+    } else {
+      guestOverNote.textContent = '';
+      guestOverNote.classList.remove('warn');
+    }
+
+    var list = document.getElementById('guestList');
+    list.innerHTML = '';
+    t.guests.forEach(function(g, idx){
+      var li = document.createElement('li');
+      li.className = 'guest-item';
+      li.innerHTML =
+        '<span class="guest-seat-badge">' + (idx+1) + '</span>' +
+        '<span class="guest-name"></span>' +
+        '<button class="guest-remove" title="Rimuovi invitato">×</button>';
+      li.querySelector('.guest-name').textContent = g.name;
+      li.querySelector('.guest-remove').addEventListener('click', function(){
+        t.guests.splice(idx,1);
+        renderAll();
+      });
+      list.appendChild(li);
+    });
+  }
+
+  // ---------- selection ----------
+  function selectTable(id){
+    selectedTableId = id;
+    renderAll();
+    document.getElementById('guestNameInput').focus();
+  }
+
+  document.getElementById('closeSelBtn').addEventListener('click', function(){
+    selectedTableId = null;
+    renderAll();
+  });
+
+  // ---------- add table ----------
+  document.querySelectorAll('.shape-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.shape-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentShape = btn.dataset.shape;
+    });
+  });
+
+  document.querySelectorAll('.seat-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.querySelectorAll('.seat-chip').forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      document.getElementById('newSeats').value = chip.dataset.seats;
+    });
+  });
+  document.getElementById('newSeats').addEventListener('input', function(){
+    var v = this.value;
+    document.querySelectorAll('.seat-chip').forEach(function(c){
+      c.classList.toggle('active', c.dataset.seats === v);
+    });
+  });
+
+  addTableBtn.addEventListener('click', function(){
+    var seats = parseInt(document.getElementById('newSeats').value, 10);
+    if (!seats || seats < 2) seats = 8;
+    var nameInput = document.getElementById('newName');
+    var name = nameInput.value.trim() || defaultTableName();
+
+    var dims = getDims({ shape: currentShape, seats: seats });
+    var pos = randomPosition(dims.w, dims.h);
+
+    var table = {
+      id: nextId(),
+      name: name,
+      shape: currentShape,
+      seats: seats,
+      x: pos.x,
+      y: pos.y,
+      guests: []
+    };
+    state.tables.push(table);
+    nameInput.value = '';
+    selectedTableId = table.id;
+    renderAll();
+  });
+
+  // ---------- edit / delete table ----------
+  document.getElementById('saveEditBtn').addEventListener('click', function(){
+    var t = findTable(selectedTableId);
+    if (!t) return;
+    var name = document.getElementById('editName').value.trim() || t.name;
+    var shape = document.getElementById('editShape').value;
+    var seats = parseInt(document.getElementById('editSeats').value, 10);
+    if (!seats || seats < 2) seats = t.seats;
+    t.name = name;
+    t.shape = shape;
+    t.seats = seats;
+    renderAll();
+  });
+
+  document.getElementById('deleteTableBtn').addEventListener('click', function(){
+    if (!selectedTableId) return;
+    deleteTable(selectedTableId);
+  });
+
+  function deleteTable(id){
+    if (!confirm('Eliminare questo tavolo e tutti i suoi invitati?')) return;
+    state.tables = state.tables.filter(function(t){ return t.id !== id; });
+    if (selectedTableId === id) selectedTableId = null;
+    renderAll();
+  }
+
+  // ---------- guests ----------
+  function addGuestToSelected(){
+    var t = findTable(selectedTableId);
+    if (!t) return;
+    var input = document.getElementById('guestNameInput');
+    var name = input.value.trim();
+    if (!name) return;
+    t.guests.push({ id: nextGuestId(), name: name });
+    input.value = '';
+    renderAll();
+    document.getElementById('guestNameInput').focus();
+  }
+  document.getElementById('addGuestBtn').addEventListener('click', addGuestToSelected);
+  document.getElementById('guestNameInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') addGuestToSelected();
+  });
+
+  // ---------- drag on canvas ----------
+  function attachDrag(wrap, table){
+    var dragging = false;
+    var startX, startY, origX, origY, moved;
+
+    wrap.addEventListener('pointerdown', function(e){
+      if (e.target.classList.contains('table-delete')) return;
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      origX = table.x;
+      origY = table.y;
+      wrap.classList.add('dragging');
+      wrap.setPointerCapture(e.pointerId);
+    });
+
+    wrap.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+      var dims = getDims(table);
+      var newX = Math.max(0, Math.min(VENUE_W - dims.w, origX + dx));
+      var newY = Math.max(0, Math.min(VENUE_H - dims.h, origY + dy));
+      table.x = newX;
+      table.y = newY;
+      wrap.style.left = newX + 'px';
+      wrap.style.top = newY + 'px';
+    });
+
+    function endDrag(e){
+      if (!dragging) return;
+      dragging = false;
+      wrap.classList.remove('dragging');
+      if (!moved){
+        selectTable(table.id);
+      }
+    }
+    wrap.addEventListener('pointerup', endDrag);
+    wrap.addEventListener('pointercancel', endDrag);
+  }
+
+  // ---------- save / load ----------
+  document.getElementById('saveBtn').addEventListener('click', function(){
+    var payload = {
+      meta: {
+        app: 'Configuratore Tavoli Matrimonio',
+        version: 1,
+        exportedAt: new Date().toISOString()
+      },
+      venue: { width: VENUE_W, height: VENUE_H },
+      tables: state.tables
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var dateStr = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = 'tavoli-matrimonio-' + dateStr + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  var fileInput = document.getElementById('fileInput');
+  document.getElementById('loadBtn').addEventListener('click', function(){
+    fileInput.click();
+  });
+  fileInput.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(evt){
+      try {
+        var data = JSON.parse(evt.target.result);
+        if (!data || !Array.isArray(data.tables)) throw new Error('formato non valido');
+        // basic sanitation
+        state.tables = data.tables.map(function(t){
+          return {
+            id: t.id || nextId(),
+            name: t.name || defaultTableName(),
+            shape: (t.shape === 'rect' || t.shape === 'square') ? 'rect' : 'round',
+            seats: Math.max(2, parseInt(t.seats,10) || 8),
+            x: typeof t.x === 'number' ? t.x : 40,
+            y: typeof t.y === 'number' ? t.y : 40,
+            guests: Array.isArray(t.guests) ? t.guests.map(function(g){
+              return { id: g.id || nextGuestId(), name: g.name || 'Invitato' };
+            }) : []
+          };
+        });
+        selectedTableId = null;
+        renderAll();
+      } catch (err){
+        alert('Il file selezionato non è una configurazione valida.\n(' + err.message + ')');
+      }
+      fileInput.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    if (!confirm('Vuoi davvero azzerare tutta la configurazione? L\'operazione non è reversibile (salva prima un file se vuoi conservarla).')) return;
+    state.tables = [];
+    selectedTableId = null;
+    renderAll();
+  });
+
+  // ---------- report PDF ----------
+  var reportBtn = document.getElementById('reportBtn');
+
+  reportBtn.addEventListener('click', function(){
+    if (state.tables.length === 0){
+      alert('Aggiungi almeno un tavolo prima di generare il report.');
+      return;
+    }
+    if (typeof html2canvas === 'undefined' || !window.jspdf){
+      alert('Le librerie per generare il PDF non sono disponibili. Controlla la connessione internet e riprova.');
+      return;
+    }
+
+    var originalLabel = reportBtn.textContent;
+    reportBtn.disabled = true;
+    reportBtn.textContent = 'Generazione in corso…';
+
+    var prevSelected = selectedTableId;
+    selectedTableId = null;
+    renderAll(); // niente evidenziazioni nello screenshot
+
+    setTimeout(function(){
+      html2canvas(venue, { backgroundColor: '#ffffff', scale: 1.6 }).then(function(canvas){
+        buildPdf(canvas.toDataURL('image/png'), canvas.width, canvas.height);
+        selectedTableId = prevSelected;
+        renderAll();
+        reportBtn.disabled = false;
+        reportBtn.textContent = originalLabel;
+      }).catch(function(err){
+        alert('Si è verificato un errore nella generazione del report.\n(' + err.message + ')');
+        selectedTableId = prevSelected;
+        renderAll();
+        reportBtn.disabled = false;
+        reportBtn.textContent = originalLabel;
+      });
+    }, 50);
+  });
+
+  function buildPdf(imgData, imgW, imgH){
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    var margin = 12;
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var dateStr = new Date().toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' });
+
+    // ---- page 1: planimetria ----
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(18);
+    doc.setTextColor(37,48,42);
+    doc.text('Disposizione Tavoli — Ricevimento', margin, 16);
+
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.setTextColor(120,113,103);
+    doc.text('Generato il ' + dateStr, margin, 22);
+
+    var maxW = pageW - margin*2;
+    var maxH = pageH - 34 - margin;
+    var ratio = Math.min(maxW/imgW, maxH/imgH);
+    var drawW = imgW*ratio;
+    var drawH = imgH*ratio;
+    var drawX = margin + (maxW-drawW)/2;
+    var drawY = 30;
+    doc.addImage(imgData, 'PNG', drawX, drawY, drawW, drawH);
+
+    doc.setFontSize(9.5);
+    doc.setTextColor(120,113,103);
+    doc.text(state.tables.length + ' tavoli · ' + totalGuests() + ' invitati totali', margin, pageH-6);
+
+    // ---- following pages: elenco invitati per tavolo ----
+    doc.addPage('a4','portrait');
+    var pw = doc.internal.pageSize.getWidth();
+    var ph = doc.internal.pageSize.getHeight();
+    var x = margin;
+    var y = 20;
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.setTextColor(37,48,42);
+    doc.text('Elenco Invitati per Tavolo', x, y);
+    y += 10;
+
+    state.tables.forEach(function(t){
+      var estimated = 9 + (t.guests.length === 0 ? 6 : t.guests.length*5.5) + 6;
+      if (y + estimated > ph - margin){
+        doc.addPage('a4','portrait');
+        y = 20;
+      }
+
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(12.5);
+      doc.setTextColor(37,48,42);
+      var shapeLabel = t.shape === 'round' ? 'Tondo' : 'Rettangolare';
+      var over = t.guests.length > t.seats;
+      doc.text(t.name + '   (' + shapeLabel + ', ' + t.seats + ' posti, ' + t.guests.length + ' assegnati' + (over ? ' — attenzione, oltre i posti disponibili' : '') + ')', x, y);
+      y += 6.5;
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+
+      if (t.guests.length === 0){
+        doc.setTextColor(150,140,128);
+        doc.text('— nessun invitato assegnato —', x+4, y);
+        y += 6;
+      } else {
+        doc.setTextColor(60,55,48);
+        t.guests.forEach(function(g, idx){
+          if (y > ph - margin){
+            doc.addPage('a4','portrait');
+            y = 20;
+          }
+          doc.text((idx+1) + '. ' + g.name, x+4, y);
+          y += 5.5;
+        });
+      }
+      y += 6; // spazio tra un tavolo e l'altro
+    });
+
+    var fileDate = new Date().toISOString().slice(0,10);
+    doc.save('report-tavoli-matrimonio-' + fileDate + '.pdf');
+  }
+
+  // ---------- init ----------
+  renderAll();
+
+})();
+</script>
+
+</body>
+</html>
